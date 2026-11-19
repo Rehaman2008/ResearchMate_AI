@@ -302,11 +302,16 @@ if "cloud_chat_messages" not in st.session_state:
 def get_gemini_client():
     """Returns an authenticated Gemini client or None with an error."""
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        try:
+            api_key = str(st.secrets.get("GEMINI_API_KEY", "")).strip()
+        except Exception:
+            pass
 
     if not api_key or api_key == "your_api_key_here":
         st.error(
             "⚠️ **Gemini API key not configured.**\n\n"
-            "Please add your key to `.env`:\n\n"
+            "Please add your key to `.env` or Streamlit Cloud Secrets:\n\n"
             "```\nGEMINI_API_KEY=your_key_here\n```\n\n"
             "Get a key at [Google AI Studio](https://aistudio.google.com/apikey)."
         )
